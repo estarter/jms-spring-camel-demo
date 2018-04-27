@@ -8,7 +8,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 @SpringBootApplication
 @EnableJms
-@ImportResource("classpath:camel.xml")
+@ImportResource("${route:camel.xml}")
 public class JmsDemoApplication {
 
 
