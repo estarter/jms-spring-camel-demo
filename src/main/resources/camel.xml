@@ -21,7 +21,7 @@
 
     <camelContext id="SampleCamel" xmlns="http://camel.apache.org/schema/spring">
         <route id="test xml route">
-            <from uri="jms:queue:output-1"/>
+            <from uri="jms:queue:input-queue"/>
             <log message="run route for ${body}" loggingLevel="WARN" logName="ch.e3ag.test"/>
             <choice>
                 <when>
@@ -35,12 +35,6 @@
                 </otherwise>
             </choice>
         </route>
-<!--
-        <route id="consume">
-            <from uri="jms:queue:output-odd"/>
-            <bean beanType="com.example.jmsdemo.JmsConsumer"/>
-        </route>
--->
     </camelContext>
 
     <bean id="cons-even" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
