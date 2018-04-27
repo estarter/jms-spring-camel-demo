@@ -1,5 +1,9 @@
 package com.example.jmsdemo;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+
 import javax.annotation.PostConstruct;
 import javax.jms.ConnectionFactory;
 
@@ -55,23 +59,21 @@ public class JmsDemoApplication /*implements JmsListenerConfigurer*/ {
         container.setDestinationName("input-queue");
         container.setMessageListener(new JmsConsumer("1"));
         container.setSessionTransacted(true);
+        container.setConcurrentConsumers(5);
+        container.setMaxConcurrentConsumers(5);
         return container;
     }
 
-//    @Bean
-//    public JmsConsumer consumer1(ConnectionFactory connectionFactory) {
-//        return new JmsConsumer(connectionFactory, "input-queue", "1");
-//    }
-
 //    @Override
 //    public void configureJmsListeners(JmsListenerEndpointRegistrar registrar) {
-//        for (int i = 1; i < 3; i++) {
-//
+//        Function<String, JmsListenerEndpoint> f = (id) -> {
 //            SimpleJmsListenerEndpoint endpoint = new SimpleJmsListenerEndpoint();
-//            endpoint.setId("myJmsEndpoint_"+i);
+//            endpoint.setId("myJmsEndpoint_"+id);
 //            endpoint.setDestination("input-queue");
-//            endpoint.setMessageListener(new JmsConsumer("" + i));
-//            registrar.registerEndpoint(endpoint);
-//        }
+//            endpoint.setMessageListener(new JmsConsumer(id));
+//            return endpoint;
+//        };
+//        registrar.registerEndpoint(f.apply("1"));
+//        registrar.registerEndpoint(f.apply("2"));
 //    }
 }

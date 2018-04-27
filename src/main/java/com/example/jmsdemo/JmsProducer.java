@@ -27,7 +27,7 @@ public class JmsProducer {
 
     @PostConstruct
     public void generate() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 30; i++) {
             produce();
         }
     }
