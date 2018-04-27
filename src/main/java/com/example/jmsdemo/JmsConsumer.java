@@ -2,49 +2,29 @@ package com.example.jmsdemo;
 
 import java.util.Random;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
 import javax.jms.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jms.listener.SessionAwareMessageListener;
 
-public class JmsConsumer implements MessageListener {
+public class JmsConsumer implements SessionAwareMessageListener {
     private static final Logger logger = LoggerFactory.getLogger(JmsConsumer.class);
-    protected final Session session;
-    protected final Connection connection;
     private final String id;
 
-    public JmsConsumer(ConnectionFactory connectionFactory, String queueName, String id)  {
+    public JmsConsumer(String id)  {
         this.id = id;
-        try {
-            connection = connectionFactory.createConnection();
-            session = connection.createSession(true, Session.CLIENT_ACKNOWLEDGE);
-            Destination queue = session.createQueue(queueName);
-
-            javax.jms.MessageConsumer consumer = session.createConsumer(queue);
-            consumer.setMessageListener(this);
-            connection.start();
-        } catch (JMSException e) {
-            throw new IllegalStateException("can't start consumer");
-        }
-    }
-
-    public void stop() throws JMSException {
-        connection.close();
     }
 
     @Override
-    public void onMessage(Message message) {
+    public void onMessage(Message message, Session session) {
         logger.info("{}: consuming message {}", id, message);
-        try {
-            Thread.sleep(new Random().nextInt(4) * 1000);
-        } catch (InterruptedException e) {}
-        if (new Random().nextInt(3) > 1) {
+//        try {
+//            Thread.sleep(new Random().nextInt(4) * 1000);
+//        } catch (InterruptedException e) {}
+        if (new Random().nextInt(5) > 1) {
             logger.info("{}: finish message {}", id, message);
             try {
                 session.commit();
@@ -52,7 +32,7 @@ public class JmsConsumer implements MessageListener {
                 logger.error("can't commit the message", e);
             }
         } else {
-            logger.info("reschedule message {}", message);
+            logger.info("{}: reschedule message {}", id, message);
             try {
                 session.rollback();
             } catch (JMSException e) {
