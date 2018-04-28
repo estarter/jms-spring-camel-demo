@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +21,8 @@ public class JmsProducer {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @RequestMapping("/produce")
-    public void produce(String queue) {
+    @RequestMapping("/produce/{queue}")
+    public void produce(@PathVariable(name = "queue") String queue) {
         jmsTemplate.convertAndSend(queue, "test " + new Random().nextInt(1000));
     }
 
@@ -28,6 +30,14 @@ public class JmsProducer {
     public void generate() {
         logger.info("produce new messages");
         for (int i = 0; i < 90; i++) {
+            produce("input-queue");
+        }
+    }
+
+    @Scheduled(fixedRate = 100)
+    protected void generateAtTimer() {
+        logger.info("produce new messages at schedule");
+        for (int i = 0; i < 10; i++) {
             produce("input-queue");
         }
     }
