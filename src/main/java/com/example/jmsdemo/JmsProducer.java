@@ -20,15 +20,15 @@ public class JmsProducer {
     private JmsTemplate jmsTemplate;
 
     @RequestMapping("/produce")
-    public void produce() {
-        jmsTemplate.convertAndSend("input-queue", "test " + new Random().nextInt(1000));
-        logger.info("produce a message");
+    public void produce(String queue) {
+        jmsTemplate.convertAndSend(queue, "test " + new Random().nextInt(1000));
     }
 
     @PostConstruct
     public void generate() {
-        for (int i = 0; i < 30; i++) {
-            produce();
+        logger.info("produce new messages");
+        for (int i = 0; i < 90; i++) {
+            produce("input-queue");
         }
     }
 }

@@ -19,15 +19,18 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="prefetchPolicy" class="org.apache.activemq.ActiveMQPrefetchPolicy">
+        <property name="queuePrefetch" value="1"/>
+    </bean>
+
     <bean id="cons-even" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="destinationName" value="input-queue"/>
         <property name="sessionTransacted" value="true"/>
         <property name="concurrency" value="40-40"/>
         <property name="messageListener">
-            <bean class="com.example.jmsdemo.JmsConsumer">
-                <constructor-arg index="0" value="id1"/>
-            </bean>
+            <bean class="com.example.jmsdemo.JmsConsumer"/>
         </property>
+        <property name="concurrentConsumers" value="100"/>
     </bean>
 </beans>

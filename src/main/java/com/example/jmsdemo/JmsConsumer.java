@@ -13,30 +13,29 @@ import org.springframework.jms.listener.SessionAwareMessageListener;
 
 public class JmsConsumer implements SessionAwareMessageListener {
     private static final Logger logger = LoggerFactory.getLogger(JmsConsumer.class);
-    private String id;
+    private ConsumerCounter consumerCounter;
 
-    public JmsConsumer(String id)  {
-        logger.info("create consumer {}", id);
-        this.id = id;
-        this.id = new Random().nextInt(100) + "";
+    public JmsConsumer(ConsumerCounter consumerCounter)  {
+        this.consumerCounter = consumerCounter;
     }
 
     @Override
     public void onMessage(Message omessage, Session session) throws JMSException {
         TextMessage message = (TextMessage) omessage;
-        logger.info("{}: consuming message {}", id, message.getText());
+        logger.info("consume message {} , parallel tasks amount {}", message.getText(), consumerCounter.inc());
         try {
-            Thread.sleep(new Random().nextInt(4000));
+//            Thread.sleep(new Random().nextInt(4000));
+            Thread.sleep(5_000);
         } catch (InterruptedException e) {}
         if (new Random().nextInt(5) > 1) {
-            logger.info("{}: finish message {}", id, message.getText());
+            logger.info("finish message {} , parallel tasks amount {}", message.getText(), consumerCounter.dec());
             try {
                 session.commit();
             } catch (JMSException e) {
                 logger.error("can't commit the message", e);
             }
         } else {
-            logger.info("{}: reschedule message {}", id, message.getText());
+            logger.info("reschedule message {} , parallel tasks amount {}", message.getText(), consumerCounter.dec());
             try {
                 session.rollback();
             } catch (JMSException e) {
