@@ -25,7 +25,7 @@
 
     <bean id="cons-even" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
-        <property name="destinationName" value="input-queue?consumer.prefetchSize=1"/>
+        <property name="destinationName" value="input-queue"/>
         <property name="sessionTransacted" value="true"/>
         <property name="concurrency" value="40-40"/>
         <property name="messageListener">
