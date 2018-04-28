@@ -29,12 +29,12 @@ public class JmsProducer {
     @PostConstruct
     public void generate() {
         logger.info("produce new messages");
-        for (int i = 0; i < 90; i++) {
+        for (int i = 0; i < 10; i++) {
             produce("input-queue");
         }
     }
 
-    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 1000)
     protected void generateAtTimer() {
         logger.info("produce new messages at schedule");
         for (int i = 0; i < 10; i++) {
